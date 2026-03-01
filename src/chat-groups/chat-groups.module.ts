@@ -8,6 +8,6 @@ import { RelationalChatGroupPersistenceModule } from './infrastructure/persisten
     imports: [RelationalChatGroupPersistenceModule],
     controllers: [ChatGroupsController],
     providers: [ChatGroupsService],
-    exports: [ChatGroupsService],
+    exports: [ChatGroupsService, RelationalChatGroupPersistenceModule],
 })
 export class ChatGroupsModule { }
