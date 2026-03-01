@@ -9,18 +9,18 @@ import { ChatGroupMapper } from '../mappers/chat-group.mapper';
 
 @Injectable()
 export class ChatGroupsRelationalRepository implements ChatGroupRepository {
-    constructor(
-        @InjectRepository(ChatGroupEntity)
-        private readonly chatGroupsRepository: Repository<ChatGroupEntity>,
-    ) { }
+  constructor(
+    @InjectRepository(ChatGroupEntity)
+    private readonly chatGroupsRepository: Repository<ChatGroupEntity>,
+  ) {}
 
-    async create(
-        data: Omit<ChatGroup, 'id' | 'createdAt' | 'updatedAt'>,
-    ): Promise<ChatGroup> {
-        const persistenceModel = ChatGroupMapper.toPersistence(data as ChatGroup);
-        const newEntity = await this.chatGroupsRepository.save(
-            this.chatGroupsRepository.create(persistenceModel),
-        );
-        return ChatGroupMapper.toDomain(newEntity);
-    }
+  async create(
+    data: Omit<ChatGroup, 'id' | 'createdAt' | 'updatedAt'>,
+  ): Promise<ChatGroup> {
+    const persistenceModel = ChatGroupMapper.toPersistence(data as ChatGroup);
+    const newEntity = await this.chatGroupsRepository.save(
+      this.chatGroupsRepository.create(persistenceModel),
+    );
+    return ChatGroupMapper.toDomain(newEntity);
+  }
 }

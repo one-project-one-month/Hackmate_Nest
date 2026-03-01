@@ -5,8 +5,8 @@ import { RelationalPersistenceModule } from './infrastructure/persistence/relati
 import { ChatGroupsModule } from '../chat-groups/chat-groups.module';
 
 @Module({
-    imports: [RelationalPersistenceModule, ChatGroupsModule],
-    controllers: [ChatGroupMembersController],
-    providers: [ChatGroupMembersService],
+  imports: [RelationalPersistenceModule, ChatGroupsModule],
+  controllers: [ChatGroupMembersController],
+  providers: [ChatGroupMembersService],
 })
-export class ChatGroupMembersModule { }
+export class ChatGroupMembersModule {}

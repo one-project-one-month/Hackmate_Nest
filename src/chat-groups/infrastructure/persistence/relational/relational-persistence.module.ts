@@ -6,13 +6,13 @@ import { ChatGroupsRelationalRepository } from './repositories/chat-groups.repos
 import { ChatGroupEntity } from './entities/chat-group.entity';
 
 @Module({
-    imports: [TypeOrmModule.forFeature([ChatGroupEntity])],
-    providers: [
-        {
-            provide: ChatGroupRepository,
-            useClass: ChatGroupsRelationalRepository,
-        },
-    ],
-    exports: [ChatGroupRepository],
+  imports: [TypeOrmModule.forFeature([ChatGroupEntity])],
+  providers: [
+    {
+      provide: ChatGroupRepository,
+      useClass: ChatGroupsRelationalRepository,
+    },
+  ],
+  exports: [ChatGroupRepository],
 })
-export class RelationalChatGroupPersistenceModule { }
+export class RelationalChatGroupPersistenceModule {}

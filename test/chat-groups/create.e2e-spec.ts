@@ -19,11 +19,12 @@ describe('ChatGroups Module - Create Only', () => {
         .send(newGroup)
         .expect(201)
         .expect(({ body }) => {
-          expect(body.id).toBeDefined();
-          expect(body.name).toBe(newGroup.name);
-          expect(body.description).toBe(newGroup.description);
-          expect(body.createdByUserId).toBe(newGroup.createdByUserId);
-          expect(body.isPrivate).toBe(newGroup.isPrivate);
+          const result = body as Record<string, any>;
+          expect(result.id).toBeDefined();
+          expect(result.name).toBe(newGroup.name);
+          expect(result.description).toBe(newGroup.description);
+          expect(result.createdByUserId).toBe(newGroup.createdByUserId);
+          expect(result.isPrivate).toBe(newGroup.isPrivate);
         });
     });
 
