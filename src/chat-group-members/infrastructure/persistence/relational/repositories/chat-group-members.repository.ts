@@ -24,4 +24,30 @@ export class ChatGroupMembersRelationalRepository implements ChatGroupMemberRepo
     );
     return ChatGroupMemberMapper.toDomain(newEntity);
   }
+
+  async markAsReadByGroupAndUser(
+    groupId: number,
+    userId: number,
+    messageId: number,
+  ): Promise<ChatGroupMember | null> {
+    const member = await this.chatGroupMemberRepository.findOne({
+      where: {
+        group: {
+          id: groupId,
+        },
+        userId,
+      },
+    });
+
+    if (!member) {
+      return null;
+    }
+
+    member.status = 'read';
+    member.lastReadMessageId = messageId;
+
+    const updatedMember = await this.chatGroupMemberRepository.save(member);
+
+    return ChatGroupMemberMapper.toDomain(updatedMember);
+  }
 }
