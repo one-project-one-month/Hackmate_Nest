@@ -11,8 +11,6 @@ import { AllConfigType } from './config/config.type';
 
 import { I18nModule, HeaderResolver } from 'nestjs-i18n';
 
-
-
 import { ChatGroupsModule } from './chat-groups/chat-groups.module';
 import { ChatGroupMembersModule } from './chat-group-members/chat-group-members.module';
 import { MessagesModule } from './messages/messages.module';
@@ -47,11 +45,13 @@ const infrastructureDatabaseModule = TypeOrmModule.forRootAsync({
       resolvers: [
         {
           use: HeaderResolver,
-          useFactory: (configService: ConfigService<AllConfigType>) => {
+          useFactory: (
+            configService: ConfigService<AllConfigType>,
+          ): string[] => {
             return [
               configService.get('app.headerLanguage', {
                 infer: true,
-              }),
+              }) as string,
             ];
           },
           inject: [ConfigService],
@@ -66,4 +66,4 @@ const infrastructureDatabaseModule = TypeOrmModule.forRootAsync({
     MessagesModule,
   ],
 })
-export class AppModule { }
+export class AppModule {}

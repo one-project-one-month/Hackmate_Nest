@@ -4,7 +4,6 @@ import { DataSource } from 'typeorm';
 
 dotenv.config();
 
-
 const AppDataSource = new DataSource({
   type: 'postgres',
   url: process.env.DATABASE_URL,
@@ -28,15 +27,14 @@ const AppDataSource = new DataSource({
     ssl:
       process.env.DATABASE_SSL_ENABLED === 'true'
         ? {
-          rejectUnauthorized:
-            process.env.DATABASE_REJECT_UNAUTHORIZED === 'true',
-          ca: process.env.DATABASE_CA ?? undefined,
-          key: process.env.DATABASE_KEY ?? undefined,
-          cert: process.env.DATABASE_CERT ?? undefined,
-        }
+            rejectUnauthorized:
+              process.env.DATABASE_REJECT_UNAUTHORIZED === 'true',
+            ca: process.env.DATABASE_CA ?? undefined,
+            key: process.env.DATABASE_KEY ?? undefined,
+            cert: process.env.DATABASE_CERT ?? undefined,
+          }
         : undefined,
   },
 });
-
 
 export default AppDataSource;

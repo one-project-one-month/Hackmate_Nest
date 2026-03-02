@@ -1,16 +1,15 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { ChatGroup } from '../../chat-groups/domain/chat-group';
-const idType = Number;
-export class ChatGroupMember {
+
+export class ChatGroupMemberResponseDto {
   @ApiProperty({
-    type: idType,
+    type: Number,
   })
   id: number | string;
 
   @ApiProperty({
-    type: () => ChatGroup,
+    type: Number,
   })
-  group: ChatGroup;
+  groupId: number | string;
 
   @ApiProperty({
     type: Number,
