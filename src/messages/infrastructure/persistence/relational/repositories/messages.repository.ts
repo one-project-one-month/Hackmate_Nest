@@ -47,4 +47,12 @@ export class MessagesRelationalRepository implements MessageRepository {
 
     return MessageMapper.toDomain(entity);
   }
+
+  async create(data: Omit<Message, 'id' | 'createdAt'>): Promise<Message> {
+    const persistenceModel = MessageMapper.toPersistence(data as Message);
+    const newEntity = await this.messagesRepository.save(
+      this.messagesRepository.create(persistenceModel),
+    );
+    return MessageMapper.toDomain(newEntity);
+  }
 }

@@ -7,4 +7,6 @@ export abstract class MessageRepository {
   ): Promise<Message[]>;
 
   abstract findById(id: number): Promise<Message | null>;
+
+  abstract create(data: Omit<Message, 'id' | 'createdAt'>): Promise<Message>;
 }
