@@ -10,4 +10,6 @@ export abstract class ChatGroupMemberRepository {
     userId: number,
     messageId: number,
   ): Promise<ChatGroupMember | null>;
+
+  abstract findByUserId(userId: number): Promise<ChatGroupMember[]>;
 }

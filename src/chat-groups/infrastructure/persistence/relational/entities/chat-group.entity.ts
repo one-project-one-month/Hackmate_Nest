@@ -23,9 +23,6 @@ export class ChatGroupEntity extends EntityRelationalHelper {
   @Column({ type: 'bigint', name: 'created_by_user_id' })
   createdByUserId: number;
 
-  @Column({ type: 'boolean', default: false, name: 'is_private' })
-  isPrivate: boolean;
-
   @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;
 

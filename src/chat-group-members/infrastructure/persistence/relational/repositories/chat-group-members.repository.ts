@@ -50,4 +50,17 @@ export class ChatGroupMembersRelationalRepository implements ChatGroupMemberRepo
 
     return ChatGroupMemberMapper.toDomain(updatedMember);
   }
+
+  async findByUserId(userId: number): Promise<ChatGroupMember[]> {
+    const entities = await this.chatGroupMemberRepository.find({
+      where: {
+        userId,
+      },
+      order: {
+        joinedAt: 'DESC',
+      },
+    });
+
+    return entities.map((entity) => ChatGroupMemberMapper.toDomain(entity));
+  }
 }

@@ -12,7 +12,6 @@ export class ChatGroupsService {
       name: createChatGroupDto.name,
       description: createChatGroupDto.description ?? null,
       createdByUserId: createChatGroupDto.createdByUserId,
-      isPrivate: createChatGroupDto.isPrivate ?? false,
     });
   }
 }

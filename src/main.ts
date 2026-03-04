@@ -39,20 +39,11 @@ async function bootstrap() {
     new ClassSerializerInterceptor(app.get(Reflector)),
   );
 
-  // 🔥 Swagger Setup
   const options = new DocumentBuilder()
     .setTitle('Chat Service API')
     .setDescription('Chat Microservice API documentation')
     .setVersion('1.0')
     .addBearerAuth()
-    .addGlobalParameters({
-      in: 'header',
-      required: false,
-      name: process.env.APP_HEADER_LANGUAGE || 'x-custom-lang',
-      schema: {
-        example: 'en',
-      },
-    })
     .build();
 
   const document = SwaggerModule.createDocument(app, options);

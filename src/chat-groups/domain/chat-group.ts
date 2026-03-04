@@ -23,12 +23,6 @@ export class ChatGroup {
   })
   createdByUserId: number | string;
 
-  @ApiProperty({
-    type: Boolean,
-    example: false,
-  })
-  isPrivate: boolean;
-
   @ApiProperty()
   createdAt: Date;
 
