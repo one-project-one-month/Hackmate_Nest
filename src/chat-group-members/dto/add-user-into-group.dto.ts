@@ -32,9 +32,4 @@ export class AddUserIntoGroupDto {
   @IsOptional()
   @IsDateString()
   mutedUntil: Date | null;
-
-  @ApiPropertyOptional({ type: String, example: 'active' })
-  @IsOptional()
-  @IsString()
-  status: string | null;
 }

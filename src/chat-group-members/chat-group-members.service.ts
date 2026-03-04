@@ -24,7 +24,7 @@ export class ChatGroupMembersService {
       mutedUntil: addUserIntoGroupDto.mutedUntil
         ? new Date(addUserIntoGroupDto.mutedUntil)
         : null,
-      status: addUserIntoGroupDto.status ?? 'active',
+      status: 'unread',
     });
 
     const responseDto = new ChatGroupMemberResponseDto();
