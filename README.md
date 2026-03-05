@@ -9,10 +9,10 @@ npm install
 ## 2. Set Up Environment Variables
 
 ```bash
-cp exampleEnv .env
+cp .example.env .env
 ```
 
-Then open `.env` and fill in your local PostgreSQL credentials:
+Then open `.env` and fill in your local PostgreSQL credentials the .env.example is already configured if you use docker-compose:
 
 ```env
 DATABASE_HOST=localhost
@@ -29,7 +29,7 @@ DATABASE_NAME=hackmate_chat
 If you don't have PostgreSQL locally:
 
 ```bash
-docker compose up -d
+docker compose up chat_db -d
 ```
 
 Default credentials from `docker-compose.yml`:
@@ -61,6 +61,17 @@ http://localhost:3000/docs
 ```
 
 ---
+
+# Docker Compose Build/Up
+
+```sh
+docker-compose build
+docker-compose up # or docker-compose up -d (for detaching)
+
+# OR
+
+docker-compose up --build # or docker-compose up --build -d
+```
 
 ## Other Useful Commands
 
