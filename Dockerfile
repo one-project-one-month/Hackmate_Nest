@@ -22,6 +22,7 @@ COPY --from=builder /app/dist ./dist
 
 ENV NODE_ENV=production
 
-EXPOSE 3000
+# 3000 port when APP_PORT env is not in the env
+EXPOSE ${APP_PORT:-3000}
 
 CMD ["node", "dist/main.js"]
