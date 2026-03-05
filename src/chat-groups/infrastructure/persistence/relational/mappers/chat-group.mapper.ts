@@ -8,7 +8,6 @@ export class ChatGroupMapper {
     domainEntity.name = raw.name;
     domainEntity.description = raw.description;
     domainEntity.createdByUserId = Number(raw.createdByUserId);
-    domainEntity.isPrivate = raw.isPrivate;
     domainEntity.createdAt = raw.createdAt;
     domainEntity.updatedAt = raw.updatedAt;
     return domainEntity;
@@ -22,7 +21,6 @@ export class ChatGroupMapper {
     persistenceEntity.name = domainEntity.name;
     persistenceEntity.description = domainEntity.description;
     persistenceEntity.createdByUserId = Number(domainEntity.createdByUserId);
-    persistenceEntity.isPrivate = domainEntity.isPrivate;
     persistenceEntity.createdAt = domainEntity.createdAt;
     persistenceEntity.updatedAt = domainEntity.updatedAt;
     return persistenceEntity;

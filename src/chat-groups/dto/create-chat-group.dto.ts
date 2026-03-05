@@ -1,11 +1,5 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import {
-  IsBoolean,
-  IsNotEmpty,
-  IsNumber,
-  IsOptional,
-  IsString,
-} from 'class-validator';
+import { IsNotEmpty, IsNumber, IsOptional, IsString } from 'class-validator';
 
 export class CreateChatGroupDto {
   @ApiProperty({ type: String, example: 'Blood Donation System' })
@@ -25,9 +19,4 @@ export class CreateChatGroupDto {
   @IsNotEmpty()
   @IsNumber()
   createdByUserId: number;
-
-  @ApiPropertyOptional({ type: Boolean, example: false })
-  @IsOptional()
-  @IsBoolean()
-  isPrivate?: boolean;
 }
