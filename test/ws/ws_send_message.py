@@ -56,7 +56,7 @@ def parse_args() -> argparse.Namespace:
 
 def main() -> int:
     args = parse_args()
-    namespace = f"/v1/ws/{args.group_id}"
+    namespace = "/v1/ws"
     sio = socketio.Client(logger=False, engineio_logger=False)
 
     done_event = threading.Event()
@@ -75,6 +75,7 @@ def main() -> int:
     def connect():
         logger.info(f"Connected to namespace: {namespace}")
         payload = {
+            "groupId": args.group_id,
             "senderUserId": args.sender_user_id,
             "body": args.body,
             "messageType": args.message_type,
@@ -86,7 +87,7 @@ def main() -> int:
     def on_ack(data):
         logger.info(f"Received ack from server: {data}")
 
-    @sio.on("message:new", namespace=namespace)
+    @sio.on(f"group:{args.group_id}:message:new", namespace=namespace)
     def on_message(data):
         logger.info(f"Received message:new! Data: {data}")
         nonlocal success
