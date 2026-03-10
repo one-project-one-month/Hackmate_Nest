@@ -23,4 +23,11 @@ export class ChatGroupsRelationalRepository implements ChatGroupRepository {
     );
     return ChatGroupMapper.toDomain(newEntity);
   }
+
+  async findById(id: number): Promise<ChatGroup | null> {
+    const entity = await this.chatGroupsRepository.findOne({
+      where: { id },
+    });
+    return entity ? ChatGroupMapper.toDomain(entity) : null;
+  }
 }

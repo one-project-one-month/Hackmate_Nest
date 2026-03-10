@@ -63,4 +63,18 @@ export class ChatGroupMembersRelationalRepository implements ChatGroupMemberRepo
 
     return entities.map((entity) => ChatGroupMemberMapper.toDomain(entity));
   }
+
+  async findByGroupAndUser(
+    groupId: number,
+    userId: number,
+  ): Promise<ChatGroupMember | null> {
+    const entity = await this.chatGroupMemberRepository.findOne({
+      where: {
+        group: { id: groupId },
+        userId,
+      },
+    });
+
+    return entity ? ChatGroupMemberMapper.toDomain(entity) : null;
+  }
 }
