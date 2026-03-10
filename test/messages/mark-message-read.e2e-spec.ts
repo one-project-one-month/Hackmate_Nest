@@ -1,14 +1,15 @@
 import request from 'supertest';
 import { closeTestApp, getTestApp } from '../utils/test-app';
 import { INestApplication } from '@nestjs/common';
+import type { Server } from 'http';
 
 describe('Messages Module - Mark As Read', () => {
   let app: INestApplication;
-  let server: any;
+  let server: Server;
 
   beforeAll(async () => {
     app = await getTestApp();
-    server = app.getHttpServer();
+    server = app.getHttpServer() as unknown as Server;
   });
 
   afterAll(async () => {

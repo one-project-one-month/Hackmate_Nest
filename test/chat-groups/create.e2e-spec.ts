@@ -2,14 +2,15 @@ import request from 'supertest';
 import { CreateChatGroupDto } from '../../src/chat-groups/dto/create-chat-group.dto';
 import { closeTestApp, getTestApp } from '../utils/test-app';
 import { INestApplication } from '@nestjs/common';
+import type { Server } from 'http';
 
 describe('ChatGroups Module - Create Only', () => {
   let app: INestApplication;
-  let server: any;
+  let server: Server;
 
   beforeAll(async () => {
     app = await getTestApp();
-    server = app.getHttpServer();
+    server = app.getHttpServer() as unknown as Server;
   });
 
   afterAll(async () => {

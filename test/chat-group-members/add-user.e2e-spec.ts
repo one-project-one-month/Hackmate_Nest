@@ -3,15 +3,16 @@ import { CreateChatGroupDto } from '../../src/chat-groups/dto/create-chat-group.
 import { AddUserIntoGroupDto } from '../../src/chat-group-members/dto/add-user-into-group.dto';
 import { closeTestApp, getTestApp } from '../utils/test-app';
 import { INestApplication } from '@nestjs/common';
+import type { Server } from 'http';
 
 describe('ChatGroupMembers Module - Add User', () => {
   let app: INestApplication;
-  let server: any;
+  let server: Server;
   let groupId: number;
 
   beforeAll(async () => {
     app = await getTestApp();
-    server = app.getHttpServer();
+    server = app.getHttpServer() as unknown as Server;
 
     const newGroup: CreateChatGroupDto = {
       name: `Test Group for Member`,

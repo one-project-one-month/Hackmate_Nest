@@ -2,15 +2,16 @@ import request from 'supertest';
 import { CreateChatGroupDto } from '../../src/chat-groups/dto/create-chat-group.dto';
 import { closeTestApp, getTestApp } from '../utils/test-app';
 import { INestApplication } from '@nestjs/common';
+import type { Server } from 'http';
 
 describe('Messages Module - Get Group Messages', () => {
   let app: INestApplication;
-  let server: any;
+  let server: Server;
   let groupId: number;
 
   beforeAll(async () => {
     app = await getTestApp();
-    server = app.getHttpServer();
+    server = app.getHttpServer() as unknown as Server;
 
     const newGroup: CreateChatGroupDto = {
       name: 'Messages Test Group',
