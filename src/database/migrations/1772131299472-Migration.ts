@@ -10,7 +10,6 @@ export class Migration1772131299472 implements MigrationInterface {
         "name" varchar(255) NOT NULL,
         "description" text,
         "created_by_user_id" bigint NOT NULL,
-        "is_private" boolean NOT NULL DEFAULT false,
         "created_at" TIMESTAMP NOT NULL DEFAULT now(),
         "updated_at" TIMESTAMP NOT NULL DEFAULT now()
       )
