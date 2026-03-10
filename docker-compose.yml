@@ -27,12 +27,12 @@ services:
       - chat_db
 
     ports:
-      - "3000:3000"
+      - '3000:3000'
 
   chat_db:
     image: postgres:18
     ports:
-      - "${POSTGRES_PORT:-5432}:5432"
+      - '${POSTGRES_PORT:-5432}:5432'
     environment:
       POSTGRES_USER: ${POSTGRES_USER:-hackmate_user}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-hackmate_password}
