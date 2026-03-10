@@ -15,8 +15,8 @@ export class CreateChatGroupDto {
   @IsString()
   description?: string | null;
 
-  @ApiProperty({ type: Number })
-  @IsNotEmpty()
+  @ApiPropertyOptional({ type: Number })
+  @IsOptional()
   @IsNumber()
-  createdByUserId: number;
+  createdByUserId?: number;
 }

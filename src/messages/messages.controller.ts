@@ -1,9 +1,18 @@
-import { Controller, Get, Param, ParseIntPipe, Query } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Param,
+  ParseIntPipe,
+  Query,
+  Req,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { ApiOkResponse, ApiTags } from '@nestjs/swagger';
 
 import { MessagesService } from './messages.service';
 import { GetGroupMessagesQueryDto } from './dto/get-group-messages-query.dto';
 import { MessageResponseDto } from './dto/message-response.dto';
+import type { RequestWithUser } from '../middleware/guards/abstract-auth.guard';
 
 @ApiTags('Messages')
 @Controller({
@@ -19,9 +28,13 @@ export class MessagesController {
   })
   @Get()
   findByGroupId(
+    @Req() req: RequestWithUser,
     @Param('id', ParseIntPipe) id: number,
     @Query() query: GetGroupMessagesQueryDto,
   ): Promise<MessageResponseDto[]> {
-    return this.messagesService.findByGroupId(id, query);
+    if (!req.authUserId) {
+      throw new UnauthorizedException('Missing authenticated user');
+    }
+    return this.messagesService.findByGroupId(id, query, req.authUserId);
   }
 }

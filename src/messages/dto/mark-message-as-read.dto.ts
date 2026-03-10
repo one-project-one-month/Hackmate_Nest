@@ -1,9 +1,9 @@
-import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty, IsNumber } from 'class-validator';
+import { ApiPropertyOptional } from '@nestjs/swagger';
+import { IsNumber, IsOptional } from 'class-validator';
 
 export class MarkMessageAsReadDto {
-  @ApiProperty({ type: Number, example: 1 })
-  @IsNotEmpty()
+  @ApiPropertyOptional({ type: Number, example: 1 })
+  @IsOptional()
   @IsNumber()
-  userId: number;
+  userId?: number;
 }

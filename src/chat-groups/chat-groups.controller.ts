@@ -1,9 +1,19 @@
-import { Controller, Post, Body, HttpStatus, HttpCode } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Body,
+  HttpStatus,
+  HttpCode,
+  ForbiddenException,
+  Req,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { ApiCreatedResponse, ApiTags } from '@nestjs/swagger';
 
 import { ChatGroupsService } from './chat-groups.service';
 import { CreateChatGroupDto } from './dto/create-chat-group.dto';
 import { ChatGroup } from './domain/chat-group';
+import type { RequestWithUser } from '../middleware/guards/abstract-auth.guard';
 
 @ApiTags('Chat Groups')
 @Controller({
@@ -18,7 +28,19 @@ export class ChatGroupsController {
   })
   @Post()
   @HttpCode(HttpStatus.CREATED)
-  create(@Body() createChatGroupDto: CreateChatGroupDto): Promise<ChatGroup> {
-    return this.chatGroupsService.create(createChatGroupDto);
+  create(
+    @Req() req: RequestWithUser,
+    @Body() createChatGroupDto: CreateChatGroupDto,
+  ): Promise<ChatGroup> {
+    if (!req.authUserId) {
+      throw new UnauthorizedException('Missing authenticated user');
+    }
+    if (
+      createChatGroupDto.createdByUserId &&
+      createChatGroupDto.createdByUserId !== req.authUserId
+    ) {
+      throw new ForbiddenException('Cannot create group for another user');
+    }
+    return this.chatGroupsService.create(createChatGroupDto, req.authUserId);
   }
 }

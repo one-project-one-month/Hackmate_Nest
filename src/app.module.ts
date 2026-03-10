@@ -8,8 +8,8 @@ import { TypeOrmConfigService } from './database/typeorm-config.service';
 import { ChatGroupsModule } from './chat-groups/chat-groups.module';
 import { ChatGroupMembersModule } from './chat-group-members/chat-group-members.module';
 import { MessagesModule } from './messages/messages.module';
-//import { APP_GUARD } from '@nestjs/core';
-//import { AuthMeGuard } from './middleware/guards/auth-me.guard';
+import { APP_GUARD } from '@nestjs/core';
+import { AuthMeGuard } from './middleware/guards/auth-me.guard';
 
 const infrastructureDatabaseModule = TypeOrmModule.forRootAsync({
   useClass: TypeOrmConfigService,
@@ -32,13 +32,11 @@ const infrastructureDatabaseModule = TypeOrmModule.forRootAsync({
     ChatGroupMembersModule,
     MessagesModule,
   ],
-  /*
   providers: [
     {
       provide: APP_GUARD,
       useClass: AuthMeGuard,
     },
   ],
-  */
 })
 export class AppModule {}

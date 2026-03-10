@@ -15,7 +15,7 @@ import { AllConfigType } from './config/config.type';
 import { ResolvePromisesInterceptor } from './utils/serializer.interceptor';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule, { cors: true });
+  const app = await NestFactory.create(AppModule);
 
   useContainer(app.select(AppModule), { fallbackOnErrors: true });
 
@@ -39,15 +39,37 @@ async function bootstrap() {
     new ClassSerializerInterceptor(app.get(Reflector)),
   );
 
-  const options = new DocumentBuilder()
-    .setTitle('Chat Service API')
-    .setDescription('Chat Microservice API documentation')
-    .setVersion('1.0')
-    .addBearerAuth()
-    .build();
+  const nodeEnv = configService.getOrThrow('app.nodeEnv', { infer: true });
+  const frontendDomain = configService.get('app.frontendDomain', {
+    infer: true,
+  });
 
-  const document = SwaggerModule.createDocument(app, options);
-  SwaggerModule.setup('docs', app, document);
+  if (
+    nodeEnv === 'production' &&
+    !frontendDomain &&
+    !process.env.WS_CORS_ORIGIN
+  ) {
+    throw new Error(
+      'FRONTEND_DOMAIN or WS_CORS_ORIGIN must be set in production',
+    );
+  }
+
+  app.enableCors({
+    origin: frontendDomain ?? (nodeEnv === 'production' ? false : true),
+    credentials: true,
+  });
+
+  if (nodeEnv !== 'production') {
+    const options = new DocumentBuilder()
+      .setTitle('Chat Service API')
+      .setDescription('Chat Microservice API documentation')
+      .setVersion('1.0')
+      .addBearerAuth()
+      .build();
+
+    const document = SwaggerModule.createDocument(app, options);
+    SwaggerModule.setup('docs', app, document);
+  }
 
   await app.listen(configService.getOrThrow('app.port', { infer: true }));
 }

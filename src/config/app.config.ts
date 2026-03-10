@@ -8,6 +8,7 @@ import {
   Max,
   Min,
   IsUrl,
+  IsBooleanString,
 } from 'class-validator';
 import validateConfig from '../utils/validate-config';
 
@@ -39,6 +40,24 @@ class EnvironmentVariablesValidator {
   @IsUrl({ require_tld: false })
   @IsOptional()
   BACKEND_DOMAIN: string;
+
+  @IsUrl({ require_tld: false })
+  @IsOptional()
+  AUTH_ME_URL: string;
+
+  @IsInt()
+  @Min(100)
+  @Max(30000)
+  @IsOptional()
+  AUTH_ME_TIMEOUT_MS: number;
+
+  @IsString()
+  @IsOptional()
+  WS_CORS_ORIGIN: string;
+
+  @IsBooleanString()
+  @IsOptional()
+  ALLOW_FAKE_AUTH: string;
 }
 
 export default registerAs<AppConfig>('app', () => {

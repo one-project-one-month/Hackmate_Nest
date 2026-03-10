@@ -1,21 +1,27 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import {
   IsNotEmpty,
-  IsNumber,
+  IsInt,
   IsOptional,
   IsString,
-  IsDateString,
+  IsDate,
+  Min,
 } from 'class-validator';
+import { Type } from 'class-transformer';
 
 export class AddUserIntoGroupDto {
   @ApiProperty({ type: Number, example: 1 })
   @IsNotEmpty()
-  @IsNumber()
+  @Type(() => Number)
+  @IsInt()
+  @Min(1)
   groupId: number;
 
   @ApiProperty({ type: Number, example: 1 })
   @IsNotEmpty()
-  @IsNumber()
+  @Type(() => Number)
+  @IsInt()
+  @Min(1)
   userId: number;
 
   @ApiPropertyOptional({ type: String, example: 'member' })
@@ -25,11 +31,19 @@ export class AddUserIntoGroupDto {
 
   @ApiPropertyOptional({ type: Number, nullable: true })
   @IsOptional()
-  @IsNumber()
+  @Type(() => Number)
+  @IsInt()
+  @Min(1)
   lastReadMessageId: number | null;
 
   @ApiPropertyOptional({ type: Date, nullable: true })
   @IsOptional()
-  @IsDateString()
+  @Type(() => Date)
+  @IsDate()
   mutedUntil: Date | null;
+
+  @ApiPropertyOptional({ type: String, example: 'unread' })
+  @IsOptional()
+  @IsString()
+  status?: string;
 }
