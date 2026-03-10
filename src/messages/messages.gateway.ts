@@ -5,54 +5,92 @@ import {
   WebSocketGateway,
   WsException,
 } from '@nestjs/websockets';
-import { ValidationPipe, UsePipes, Logger } from '@nestjs/common';
+import { ValidationPipe, UsePipes, Logger, UseGuards } from '@nestjs/common';
 import { Socket } from 'socket.io';
 
 import { MessagesService } from './messages.service';
-import { CreateMessageDto } from './dto/create-message.dto';
 import { MessageResponseDto } from './dto/message-response.dto';
 import validationOptions from '../utils/validation-options';
+import { WsAuthGuard } from '../middleware/guards/ws-auth.guard';
+import { JoinGroupDto } from './dto/join-group.dto';
+import { SendMessageDto } from './dto/send-message.dto';
 
-const GROUP_NAMESPACE_REGEX = /^\/v1\/ws\/(\d+)$/;
+type MessagesServicePort = {
+  assertMember(groupId: number, userId: number): Promise<void>;
+  create(
+    groupId: number,
+    userId: number,
+    body: SendMessageDto,
+  ): Promise<MessageResponseDto>;
+};
 
 @WebSocketGateway({
-  namespace: GROUP_NAMESPACE_REGEX,
-  cors: { origin: '*' },
+  namespace: '/v1/ws',
+  cors: {
+    origin: process.env.WS_CORS_ORIGIN ?? process.env.FRONTEND_DOMAIN ?? '*',
+  },
 })
+@UseGuards(WsAuthGuard)
 export class MessagesGateway {
   private readonly logger = new Logger(MessagesGateway.name);
+  private readonly messagesService: MessagesServicePort;
 
-  constructor(private readonly messagesService: MessagesService) {}
-
-  handleConnection(client: Socket): void {
-    const groupId = this.extractGroupId(client);
-    if (!groupId) {
-      this.logger.error(
-        `Connection rejected: invalid namespace for client ${client.id}`,
-      );
-      client.disconnect();
-      return;
-    }
-    this.logger.log(`Client ${client.id} connected to group ${groupId}`);
+  constructor(messagesService: MessagesService) {
+    this.messagesService = messagesService;
   }
 
-  /**
-   * Receiving and broadcasting messages
-   */
+  handleConnection(client: Socket): void {
+    this.logger.log(`Client ${client.id} connected`);
+  }
+
+  @UsePipes(new ValidationPipe(validationOptions))
+  @SubscribeMessage('group:join')
+  async handleJoin(
+    @ConnectedSocket() client: Socket,
+    @MessageBody() body: JoinGroupDto,
+  ): Promise<{ groupId: number; status: 'joined' }> {
+    const { groupId } = body;
+    const userId = this.getUserId(client);
+    if (!userId) {
+      throw new WsException('Unauthorized');
+    }
+
+    await this.messagesService.assertMember(groupId, userId);
+    await client.join(this.getGroupRoom(groupId));
+    return { groupId, status: 'joined' };
+  }
+
+  @UsePipes(new ValidationPipe(validationOptions))
+  @SubscribeMessage('group:leave')
+  async handleLeave(
+    @ConnectedSocket() client: Socket,
+    @MessageBody() body: JoinGroupDto,
+  ): Promise<{ groupId: number; status: 'left' }> {
+    const { groupId } = body;
+    await client.leave(this.getGroupRoom(groupId));
+    return { groupId, status: 'left' };
+  }
+
   @UsePipes(new ValidationPipe(validationOptions))
   @SubscribeMessage('message:send')
   async handleMessage(
     @ConnectedSocket() client: Socket,
-    @MessageBody() body: CreateMessageDto,
+    @MessageBody() body: SendMessageDto,
   ): Promise<MessageResponseDto> {
-    const groupId = this.extractGroupId(client);
-    if (!groupId) {
-      throw new WsException('Invalid group id');
+    const { groupId } = body;
+
+    const userId = this.getUserId(client);
+    if (!userId) {
+      throw new WsException('Unauthorized');
     }
 
     try {
-      const created = await this.messagesService.create(groupId, body);
-      client.nsp.emit('message:new', created);
+      await this.messagesService.assertMember(groupId, userId);
+      await client.join(this.getGroupRoom(groupId));
+      const created = await this.messagesService.create(groupId, userId, body);
+      client.nsp
+        .to(this.getGroupRoom(groupId))
+        .emit(`group:${groupId}:message:new`, created);
       return created;
     } catch (error) {
       this.logger.error(
@@ -60,21 +98,28 @@ export class MessagesGateway {
           error instanceof Error ? error.message : String(error)
         }`,
       );
-      throw new WsException('Failed to send message');
+      throw new WsException(
+        error instanceof Error ? error.message : 'Failed to send message',
+      );
     }
   }
 
-  private extractGroupId(client: Socket): number | null {
-    const match = GROUP_NAMESPACE_REGEX.exec(client.nsp.name);
-    if (!match) {
+  private getGroupRoom(groupId: number): string {
+    return `group:${groupId}`;
+  }
+
+  private getUserId(client: Socket): number | null {
+    const data = client.data as unknown;
+    if (!data || typeof data !== 'object') {
       return null;
     }
 
-    const groupId = Number(match[1]);
-    if (!Number.isInteger(groupId) || groupId <= 0) {
+    const user = (data as Record<string, unknown>).user;
+    if (!user || typeof user !== 'object') {
       return null;
     }
 
-    return groupId;
+    const userId = (user as Record<string, unknown>).id;
+    return typeof userId === 'number' ? userId : null;
   }
 }
