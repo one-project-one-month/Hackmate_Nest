@@ -55,7 +55,7 @@ npm run start:dev
 
 App runs at: `http://localhost:3000`
 
-## 6. Swagger API Docs (Non-Production Only)
+## 6. Swagger API Docs
 
 ```
 http://localhost:3000/docs
@@ -90,7 +90,7 @@ http://localhost:3000/docs
 - `chat_group_members`: membership, roles, read state.
 - `messaging_messages`: message payloads and timestamps.
 
-## Runtime Flow (Happy Path)
+## Runtime Flow
 
 1. Client authenticates with the main backend and obtains a token.
 2. HTTP requests include `Authorization: Bearer <token>`.
