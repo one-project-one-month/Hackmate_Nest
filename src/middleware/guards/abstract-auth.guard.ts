@@ -71,7 +71,7 @@ export abstract class AbstractAuthGuard implements CanActivate {
   private async validateToken(token: string): Promise<number> {
     const authMeUrl =
       process.env.AUTH_ME_URL ??
-      `${process.env.BACKEND_DOMAIN ?? 'http://localhost:8000'}/api/auth/me`;
+      `${process.env.BACKEND_DOMAIN ?? 'http://localhost:8000'}/api/v1/auth/me`;
 
     const authHeaderValue = token.startsWith('Bearer ')
       ? token
@@ -122,7 +122,19 @@ export abstract class AbstractAuthGuard implements CanActivate {
     if (userId !== null) return userId;
 
     const data = payload.data as Record<string, unknown> | undefined;
-    return data ? this.parseNumber(data.id ?? data.userId) : null;
+    const dataId = data ? this.parseNumber(data.id ?? data.userId) : null;
+    if (dataId !== null) return dataId;
+
+    const content = payload.content as Record<string, unknown> | undefined;
+    if (!content) return null;
+
+    const contentId = this.parseNumber(content.id ?? content.userId);
+    if (contentId !== null) return contentId;
+
+    const contentUser = content.user as Record<string, unknown> | undefined;
+    return contentUser
+      ? this.parseNumber(contentUser.id ?? contentUser.userId)
+      : null;
   }
 
   protected parseNumber(value: unknown): number | null {

@@ -1,8 +1,6 @@
 import {
   Controller,
   Get,
-  Param,
-  ParseIntPipe,
   Req,
   UnauthorizedException,
 } from '@nestjs/common';
@@ -14,7 +12,7 @@ import type { RequestWithUser } from '../middleware/guards/abstract-auth.guard';
 
 @ApiTags('Chat Group Members')
 @Controller({
-  path: '/:userId/groups',
+  path: '/my-groups',
   version: '1',
 })
 export class UserGroupsController {
@@ -27,12 +25,14 @@ export class UserGroupsController {
   })
   @Get()
   findUserGroups(
-    @Param('userId', ParseIntPipe) userId: number,
     @Req() req: RequestWithUser,
   ): Promise<UserGroupsResponseDto> {
     if (!req.authUserId) {
       throw new UnauthorizedException('Missing authenticated user');
     }
-    return this.chatGroupMembersService.findUserGroups(userId, req.authUserId);
+    return this.chatGroupMembersService.findUserGroups(
+      req.authUserId,
+      req.authUserId,
+    );
   }
 }
